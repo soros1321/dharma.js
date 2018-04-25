@@ -43,15 +43,18 @@ import {
 } from "../../../src/adapters/simple_interest_loan_adapter";
 
 import { ContractsAPI, ContractsError } from "../../../src/apis/contracts_api";
+import { TokenAPI } from "../../../src/apis";
 
 const provider = new Web3.providers.HttpProvider("http://localhost:8545");
 const web3 = new Web3(provider);
 const web3Utils = new Web3Utils(web3);
 const contracts = new ContractsAPI(web3);
+const tokenApi = new TokenAPI(web3, contracts);
 
 const collateralizedSimpleInterestLoanAdapter = new CollateralizedSimpleInterestLoanAdapter(
     web3,
     contracts,
+    tokenApi,
 );
 const collateralizedLoanTerms = new CollateralizedLoanTerms(web3, contracts);
 
@@ -80,7 +83,7 @@ describe("Collateralized Terms Contract Interface (Unit Tests)", () => {
     const scenario1: Scenario = {
         unpackedParams: {
             collateralTokenIndex: new BigNumber(0),
-            collateralAmount: new BigNumber(3.5 * 10 ** 18),
+            collateralAmount: new BigNumber(3.5),
             gracePeriodInDays: new BigNumber(5),
         },
         packedParams: "0x000000000000000000000000000000000000000000000030927f74c9de000005",
@@ -89,7 +92,7 @@ describe("Collateralized Terms Contract Interface (Unit Tests)", () => {
     const scenario2: Scenario = {
         unpackedParams: {
             collateralTokenIndex: new BigNumber(1),
-            collateralAmount: new BigNumber(723489020 * 10 ** 18),
+            collateralAmount: new BigNumber(723489020),
             gracePeriodInDays: new BigNumber(30),
         },
         packedParams: "0x00000000000000000000000000000000000000125674c25cd7f81d067000001e",
@@ -98,7 +101,7 @@ describe("Collateralized Terms Contract Interface (Unit Tests)", () => {
     const scenario3: Scenario = {
         unpackedParams: {
             collateralTokenIndex: new BigNumber(8),
-            collateralAmount: new BigNumber(1212234234 * 10 ** 18),
+            collateralAmount: new BigNumber(1212234234),
             gracePeriodInDays: new BigNumber(90),
         },
         packedParams: "0x0000000000000000000000000000000000000083eabc9580d20c1abba800005a",
@@ -285,9 +288,9 @@ describe("Collateralized Simple Interest Loan Adapter (Unit Tests)", () => {
             tokenSymbols.map((symbol) => contracts.getTokenAddressBySymbolAsync(symbol)),
         );
 
-        const principalAmountForScenario1 = new BigNumber(1000 * 10 ** 18);
-        const principalAmountForScenario2 = new BigNumber(12 * 10 ** 18);
-        const principalAmountForScenario3 = new BigNumber(50 * 10 ** 18);
+        const principalAmountForScenario1 = new BigNumber(1000);
+        const principalAmountForScenario2 = new BigNumber(12);
+        const principalAmountForScenario3 = new BigNumber(50);
 
         const debtOrderBase = {
             ...DebtOrder.DEFAULTS,
@@ -327,7 +330,7 @@ describe("Collateralized Simple Interest Loan Adapter (Unit Tests)", () => {
             amortizationUnit: SimpleInterestLoanAdapter.Installments.MONTHLY,
             termLength: new BigNumber(2),
             collateralTokenSymbol: tokenSymbols[2],
-            collateralAmount: new BigNumber(10 * 10 ** 18),
+            collateralAmount: new BigNumber(10),
             gracePeriodInDays: new BigNumber(90),
         };
 
@@ -338,7 +341,7 @@ describe("Collateralized Simple Interest Loan Adapter (Unit Tests)", () => {
             amortizationUnit: SimpleInterestLoanAdapter.Installments.YEARLY,
             termLength: new BigNumber(3),
             collateralTokenSymbol: tokenSymbols[0],
-            collateralAmount: new BigNumber(5 * 10 ** 18),
+            collateralAmount: new BigNumber(5),
             gracePeriodInDays: new BigNumber(120),
         };
 
@@ -349,7 +352,7 @@ describe("Collateralized Simple Interest Loan Adapter (Unit Tests)", () => {
             amortizationUnit: SimpleInterestLoanAdapter.Installments.WEEKLY,
             termLength: new BigNumber(10),
             collateralTokenSymbol: tokenSymbols[1],
-            collateralAmount: new BigNumber(32 * 10 ** 18),
+            collateralAmount: new BigNumber(32),
             gracePeriodInDays: new BigNumber(10),
         };
 
